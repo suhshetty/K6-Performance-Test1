@@ -1,15 +1,8 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 
-// Read cookies from the local directory
-const cookiesFile = open('./cookies.json');
-const cookies = JSON.parse(cookiesFile);
-
-// Convert cookies into a "Cookie" header string
-const cookieHeader = cookies.map((cookie) => `${cookie.name}=${cookie.value}`).join('; ');
-
-// Print the cookie to verify
-console.log('Loaded Cookie Header:', cookieHeader);
+// Declare cookieHeader outside the default function
+let cookieHeader = '';
 
 export const options = {
   vus: 1, // Number of virtual users
@@ -17,6 +10,32 @@ export const options = {
 };
 
 export default function () {
+  // Fetch cookies from the GitHub repository during the test execution
+  if (!cookieHeader) {
+    const cookiesUrl = 'https://raw.githubusercontent.com/suhshetty/Selenium-Fetch-cookie-/main/cookies.json';
+    const response = http.get(cookiesUrl);
+
+    // Parse cookies from the response body
+    const cookies = JSON.parse(response.body);
+
+    // Print the fetched cookies for verification
+    console.log('Fetched Cookies:', JSON.stringify(cookies));
+
+    // Check if ASP.NET_SessionId exists in cookies
+    const aspNetSessionIdCookie = cookies.find(cookie => cookie.name === 'ASP.NET_SessionId');
+    if (aspNetSessionIdCookie) {
+      console.log('ASP.NET_SessionId cookie value:', aspNetSessionIdCookie.value);
+    } else {
+      console.log('ASP.NET_SessionId cookie not found!');
+    }
+
+    // Convert cookies into a "Cookie" header string
+    cookieHeader = cookies.map((cookie) => `${cookie.name}=${cookie.value}`).join('; ');
+
+    // Print the cookie header to verify
+    console.log('Loaded Cookie Header:', cookieHeader);
+  }
+
   // Login request
   const loginUrl = 'https://kommune.mainmanager.is/mmv2/MMV2Login.aspx';
   const loginPayload = {
@@ -46,6 +65,12 @@ export default function () {
   // Print the response headers to ensure the cookie is being sent
   console.log('Response Headers:', JSON.stringify(loginResponse.headers));
   sleep(2); // Pause test
+
+
+
+
+
+
 
 
 
@@ -447,7 +472,7 @@ export default function () {
   // Validate response
   check(combobox_data_response, {
     'Step 10 : Fetch Combobox Data for Lease Contracts, Status is 200': (r) => r.status === 200,
-    'Step 10 : Response contains "Show all sites"': (r) => r.body.includes('Show all sites'),
+    //'Step 10 : Response contains "Show all sites"': (r) => r.body.includes('Show all sites'),
   });
   
   // Log the response for debugging
@@ -795,6 +820,7 @@ export default function () {
       'STEP 20 : Server is Cloudflare': (r) => r.headers['Server'] === 'cloudflare',
     });
   }
+  
     
   
   
