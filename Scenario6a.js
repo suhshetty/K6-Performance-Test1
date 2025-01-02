@@ -12,7 +12,7 @@ export const options = {
 export default function () {
   // Fetch cookies from the GitHub repository during the test execution
   if (!cookieHeader) {
-    const cookiesUrl = 'https://raw.githubusercontent.com/suhshetty/Selenium-Fetch-cookie-/main/cookies.json';
+    const cookiesUrl = 'https://raw.githubusercontent.com/suhshetty/Fetch-Cookies/main/cookies.json';
     const response = http.get(cookiesUrl);
 
     // Parse cookies from the response body
