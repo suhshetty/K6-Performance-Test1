@@ -12,11 +12,7 @@ export const options = {
 export default function () {
   // Fetch cookies from the GitHub repository during the test execution
   if (!cookieHeader) {
-<<<<<<< HEAD
-    const cookiesUrl = 'https://raw.githubusercontent.com/suhshetty/c4/main/cookies.json';
-=======
-    const cookiesUrl = 'https://raw.githubusercontent.com/suhshetty/Cookies-/main/cookies.json';
->>>>>>> aab6af78e8a95ce3d771a9bae8a4b84c2a229eb8
+    const cookiesUrl = 'https://raw.githubusercontent.com/suhshetty/cookies/main/cookies.json';
     const response = http.get(cookiesUrl);
  
     // Parse cookies from the response body

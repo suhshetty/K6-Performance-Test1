@@ -12,11 +12,7 @@ export const options = {
 export default function () {
   // Fetch cookies from the GitHub repository during the test execution
   if (!cookieHeader) {
-<<<<<<< HEAD
-    const cookiesUrl = 'https://raw.githubusercontent.com/suhshetty/c4/main/cookies.json';
-=======
-    const cookiesUrl = 'https://raw.githubusercontent.com/suhshetty/Cookies-/main/cookies.json';
->>>>>>> aab6af78e8a95ce3d771a9bae8a4b84c2a229eb8
+    const cookiesUrl = 'https://raw.githubusercontent.com/suhshetty/cookies/main/cookies.json';
     const response = http.get(cookiesUrl);
  
     // Parse cookies from the response body
@@ -823,4 +819,179 @@ export default function () {
       'STEP 20 : Content-Type is HTML': (r) => r.headers['Content-Type'] === 'text/html; charset=utf-8',
       'STEP 20 : Server is Cloudflare': (r) => r.headers['Server'] === 'cloudflare',
     });
-  }
+ 
+// Step 16: Click on pin filter
+
+// Constants
+const apiUrl = 'https://kommune.mainmanager.is/mmv2/restapi/List/GetMMList';
+
+// Headers for the API request
+const buildingArchiveHeaders = {
+    'Content-Type': 'application/json',
+    Cookie: cookieHeader,
+};
+
+// Click on "API Endpoint"
+sleep(2); // Pause test
+const apiResponse = http.post(apiUrl, null, { headers: buildingArchiveHeaders, timeout: "120s" });
+sleep(2); // Pause test
+
+// Check if the response contains the text "ShowBIM" and status is 200
+check(apiResponse, {
+    'STEP 16: API response status is 200': (res) => res.status === 200,
+});
+
+// Log the response for debugging
+console.log('Step 16 : -----> Select Work order overview body:', apiResponse.body);
+
+sleep(2); // Pause test
+
+
+// Step 17: Work order status : Select All
+// Constants
+const apiUrl_ = 'https://kommune.mainmanager.is/mmv2/services/MMLayout.asmx/RefreshDataFilter';
+
+// Headers for the API request
+const buildingArchiveHeaders_ = {
+    'Content-Type': 'application/json',
+    Cookie: cookieHeader,
+};
+
+// Define the payload as JSON
+const payload_ = JSON.stringify({
+    DataTag: "Request",
+    ControlIDChanged: "DataFilter_TFStatus",
+    TemplateID: 0,
+    Value: [
+        "DataFilter_TFSearchText#",
+        "DataFilter_TFDateFilterID#1000",
+        "DataFilter_TFTimeLimitINPUT#All years",
+        "DataFilter_TFTimeLimit#;",
+        "DataFilter_TFMainTypeID#0",
+        "DataFilter_TFAssignmentCategoryID#0",
+        "DataFilter_TFFinanceDataSetID#0",
+        "DataFilter_TFAccountID#0",
+        "DataFilter_TFMaintenanceCategoryID#0",
+        "DataFilter_TFCategoryID#0",
+        "DataFilter_TFOrganisationFromID#0",
+        "DataFilter_TFOwnerID#0",
+        "DataFilter_TFOrganisationToID#0",
+        "DataFilter_TFEmployeeToID#0",
+        "DataFilter_TFFinishBehindSchedule#false",
+        "DataFilter_TFStatus#5,2,1,14"
+    ]
+});
+
+sleep(2); // Pause test
+const apiResponse_ = http.post(apiUrl_, payload_, { headers: buildingArchiveHeaders_, timeout: "120s" });
+sleep(4); // Pause test
+
+// Check if the response contains the text "ControlID" and status is 200
+check(apiResponse_, {
+    'STEP 17: API response status is 200': (res) => res.status === 200,
+    'STEP 17: API response contains ControlID': (res) => res.body.includes('ControlID'),
+});
+
+sleep(2); // Pause test
+
+
+// Step 18: Work order status : Deselect All
+
+// Constants
+const apiUrl__ = 'https://kommune.mainmanager.is/mmv2/restapi/List/GetMMList';
+
+// Headers for the API request
+const buildingArchiveHeaders__ = {
+    'Content-Type': 'application/json',
+    Cookie: cookieHeader,
+};
+
+// Click on "API Endpoint"
+sleep(2); // Pause test
+const apiResponse__ = http.post(apiUrl__, null, { headers: buildingArchiveHeaders__, timeout: "120s" });
+sleep(2); // Pause test
+
+// Check if the response contains the text "ShowBIM" and status is 200
+check(apiResponse__, {
+    'STEP 18: API response status is 200': (res) => res.status === 200,
+    'STEP 18: API response contains ControlID': (res) => res.body.includes('recordsTotal'),
+});
+
+// Log the response for debugging
+console.log('Step 18 : -----> Select Work order overview body:', apiResponse__.body);
+
+sleep(2); // Pause test
+
+
+// Step 19: Clear filter
+// Constants
+const apiUrl___ = 'https://kommune.mainmanager.is/mmv2/services/MMLayout.asmx/EmptyDataFilter';
+
+// Headers for the API request
+const buildingArchiveHeaders___ = {
+    'Content-Type': 'application/json',
+    Cookie: cookieHeader,
+};
+
+// Payload
+const payload___ = JSON.stringify({
+    DataTag: "Request",
+    Value: [
+        "DataFilter_TFSearchText#",
+        "DataFilter_TFDateFilterID#1000",
+        "DataFilter_TFTimeLimitINPUT#All years",
+        "DataFilter_TFTimeLimit#;",
+        "DataFilter_TFMainTypeID#0",
+        "DataFilter_TFAssignmentCategoryID#0",
+        "DataFilter_TFFinanceDataSetID#0",
+        "DataFilter_TFAccountID#0",
+        "DataFilter_TFMaintenanceCategoryID#0",
+        "DataFilter_TFCategoryID#0",
+        "DataFilter_TFOrganisationFromID#0",
+        "DataFilter_TFOwnerID#0",
+        "DataFilter_TFOrganisationToID#0",
+        "DataFilter_TFEmployeeToID#0",
+        "DataFilter_TFFinishBehindSchedule#false",
+        "DataFilter_TFStatus#"
+    ]
+});
+
+sleep(2); // Pause test
+const apiResponse___ = http.post(apiUrl___, payload___, { headers: buildingArchiveHeaders___, timeout: "120s" });
+sleep(4); // Pause test
+
+// Check if the response contains the text "FormRefresh" and status is 200
+check(apiResponse___, {
+    'STEP 19: API response status is 200': (res) => res.status === 200,
+    'STEP 19: API response contains FormRefresh': (res) => res.body.includes('FormRefresh'),
+});
+
+sleep(2); // Pause test
+
+
+// STEP 20: Logout Request
+const logoutUrl = 'https://kommune.mainmanager.is/mmv2/MMV2Logout.aspx';
+
+const logoutHeaders = {
+    'Content-Type': 'text/html; charset=utf-8',
+    // 'Cookie': cookieHeader, // Uncomment if needed
+};
+
+sleep(2); // Pause test
+const logoutResponse = http.get(logoutUrl, { headers: logoutHeaders, timeout: "120s" });
+sleep(2); // Pause test
+
+check(logoutResponse, {
+    'STEP 20 : Logout Request, Status is 200': (r) => r.status === 200,
+    'STEP 20 : Content-Type is HTML': (r) => r.headers['Content-Type'] === 'text/html; charset=utf-8',
+    'STEP 20 : Server is Cloudflare': (r) => r.headers['Server'] === 'cloudflare',
+});
+}
+ 
+   
+ 
+ 
+ 
+ 
+ 
+ 
