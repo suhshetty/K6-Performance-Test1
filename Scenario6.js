@@ -1,45 +1,52 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
- 
+
 // Declare cookieHeader outside the default function
 let cookieHeader = '';
- 
+
 export const options = {
   vus: 1, // Number of virtual users
   duration: '3m', // Duration of the test
 };
- 
+
 export default function () {
   // Fetch cookies from the GitHub repository during the test execution
   if (!cookieHeader) {
-<<<<<<< HEAD
-    const cookiesUrl = 'https://raw.githubusercontent.com/suhshetty/c4/main/cookies.json';
-=======
-    const cookiesUrl = 'https://raw.githubusercontent.com/suhshetty/Cookies-/main/cookies.json';
->>>>>>> aab6af78e8a95ce3d771a9bae8a4b84c2a229eb8
+
+    const cookiesUrl = 'https://raw.githubusercontent.com/suhshetty/Login-/master/cookies.json';
     const response = http.get(cookiesUrl);
- 
-    // Parse cookies from the response body
-    const cookies = JSON.parse(response.body);
- 
-    // Print the fetched cookies for verification
-    console.log('Fetched Cookies:', JSON.stringify(cookies));
- 
-    // Check if ASP.NET_SessionId exists in cookies
-    const aspNetSessionIdCookie = cookies.find(cookie => cookie.name === 'ASP.NET_SessionId');
-    if (aspNetSessionIdCookie) {
-      console.log('ASP.NET_SessionId cookie value:', aspNetSessionIdCookie.value);
+
+    // Log the response body for debugging
+    console.log('Response Body:', response.body);
+
+    // Check if the response is in JSON format
+    if (response.headers['Content-Type'] && response.headers['Content-Type'].includes('application/json')) {
+      try {
+        // Parse cookies from the response body
+        const cookies = JSON.parse(response.body);
+        console.log('Fetched Cookies:', JSON.stringify(cookies));
+
+        // Check if ASP.NET_SessionId exists in cookies
+        const aspNetSessionIdCookie = cookies.find(cookie => cookie.name === 'ASP.NET_SessionId');
+        if (aspNetSessionIdCookie) {
+          console.log('ASP.NET_SessionId cookie value:', aspNetSessionIdCookie.value);
+        } else {
+          console.log('ASP.NET_SessionId cookie not found!');
+        }
+
+        // Convert cookies into a "Cookie" header string
+        cookieHeader = cookies.map((cookie) => `${cookie.name}=${cookie.value}`).join('; ');
+
+        // Print the cookie header to verify
+        console.log('Loaded Cookie Header:', cookieHeader);
+      } catch (e) {
+        console.error('Failed to parse cookies:', e);
+      }
     } else {
-      console.log('ASP.NET_SessionId cookie not found!');
+      console.error('Invalid JSON response:', response.body);
     }
- 
-    // Convert cookies into a "Cookie" header string
-    cookieHeader = cookies.map((cookie) => `${cookie.name}=${cookie.value}`).join('; ');
- 
-    // Print the cookie header to verify
-    console.log('Loaded Cookie Header:', cookieHeader);
   }
- 
+
   // Login request
   const loginUrl = 'https://kommune.mainmanager.is/mmv2/MMV2Login.aspx';
   const loginPayload = {
@@ -47,28 +54,30 @@ export default function () {
     'lgnUserLogin$Password': 'Testing@!123',
     'lgnUserLogin$Login': 'Login',
   };
- 
+
   const loginHeaders = {
     'Content-Type': 'application/x-www-form-urlencoded',
     'Cookie': cookieHeader, // Add the cookie header
   };
- 
+
   // Pause test for a moment
   sleep(2);
- 
+
   const loginResponse = http.post(loginUrl, loginPayload, { headers: loginHeaders, timeout: '120s' });
- 
+
   // Pause test for a moment
   sleep(2);
- 
+
   // Check if the login request was successful
   check(loginResponse, {
     'Step 1 : Login successful': (res) => res.status === 200,
   });
- 
+
   // Print the response headers to ensure the cookie is being sent
   console.log('Response Headers:', JSON.stringify(loginResponse.headers));
   sleep(2); // Pause test
+
+
  
  
  
